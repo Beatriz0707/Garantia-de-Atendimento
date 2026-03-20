@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garantia de Atendimento — RN 566</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00875A;
+    --green-light: #E3F5EE;
+    --green-mid: #C0E8D5;
+    --amber: #B45309;
+    --amber-light: #FEF3C7;
+    --red: #B91C1C;
+    --red-light: #FEE2E2;
+    --blue: #1D4ED8;
+    --blue-light: #EFF6FF;
+    --purple: #6D28D9;
+    --purple-light: #F5F3FF;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-900: #111827;
+    --font: 'IBM Plex Sans', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--gray-50); color: var(--gray-900); min-height: 100vh; font-size: 14px; line-height: 1.5; }
+  header { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 14px 24px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  .logo-badge { background: var(--green); color: #fff; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 4px; letter-spacing: .04em; font-family: var(--mono); }
+  header h1 { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+  header span { font-size: 12px; color: var(--gray-400); margin-left: 4px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 24px 20px 60px; }
+  .tabs { display: flex; gap: 2px; background: var(--gray-100); border-radius: 8px; padding: 3px; margin-bottom: 24px; }
+  .tab { flex: 1; padding: 8px 10px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--gray-600); border-radius: 6px; transition: all .15s; text-align: center; font-family: var(--font); }
+  .tab.active { background: #fff; color: var(--gray-900); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-400); margin: 20px 0 8px; font-family: var(--mono); }
+
+  .tipo-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+  .tipo-pill { padding: 7px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid var(--gray-200); border-radius: 20px; background: #fff; color: var(--gray-600); font-family: var(--font); transition: all .15s; }
+  .tipo-pill:hover { border-color: var(--gray-300); background: var(--gray-50); }
+  .tipo-pill.sel-consulta { background: var(--blue-light); border-color: #93C5FD; color: var(--blue); }
+  .tipo-pill.sel-exame { background: var(--purple-light); border-color: #C4B5FD; color: var(--purple); }
+  .tipo-pill.sel-terapia { background: var(--amber-light); border-color: #FCD34D; color: var(--amber); }
+  .tipo-pill.sel-tea { background: var(--red-light); border-color: #FCA5A5; color: var(--red); }
+  .tipo-pill.sel-procedimento { background: var(--green-light); border-color: var(--green-mid); color: var(--green); }
+
+  .checklist-panel { display: none; }
+  .checklist-panel.active { display: block; }
+
+  .progress-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .progress-label { font-size: 12px; color: var(--gray-600); font-family: var(--mono); }
+  .reset-btn { font-size: 12px; color: var(--gray-400); background: none; border: none; cursor: pointer; font-family: var(--font); text-decoration: underline; }
+  .progress-track { height: 3px; background: var(--gray-200); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width .35s ease; }
+  .fill-consulta { background: var(--blue); }
+  .fill-exame { background: var(--purple); }
+  .fill-terapia { background: var(--amber); }
+  .fill-tea { background: var(--red); }
+  .fill-procedimento { background: var(--green); }
+
+  .check-card { display: flex; align-items: flex-start; gap: 12px; background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px 14px; margin-bottom: 6px; cursor: pointer; transition: border-color .15s, opacity .2s; user-select: none; }
+  .check-card:hover { border-color: var(--gray-300); }
+  .check-card.done { opacity: .4; }
+  .check-card.done .custom-check { border-color: var(--green); background: var(--green); }
+  .check-card.done .custom-check::after { display: block; }
+  .custom-check { width: 18px; height: 18px; border: 1.5px solid var(--gray-300); border-radius: 4px; flex-shrink: 0; margin-top: 1px; position: relative; transition: all .15s; background: #fff; }
+  .custom-check::after { content: ''; display: none; position: absolute; left: 4px; top: 1px; width: 6px; height: 10px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(45deg); }
+  .check-text { flex: 1; }
+  .check-main { font-size: 14px; font-weight: 500; color: var(--gray-900); }
+  .check-sub { font-size: 12px; color: var(--gray-600); margin-top: 2px; line-height: 1.4; }
+  .check-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; font-family: var(--mono); background: var(--blue-light); color: var(--blue); display: inline-block; margin-top: 4px; }
+  .tag-obrig { background: #FFF7ED; color: #C2410C; }
+  .tag-ver { background: var(--gray-100); color: var(--gray-600); }
+
+  .alert { padding: 12px 14px; border-radius: 8px; font-size: 13px; line-height: 1.55; margin-top: 16px; display: none; }
+  .alert.show { display: block; }
+  .alert-ok { background: var(--green-light); border: 1px solid var(--green-mid); color: #065F46; }
+  .alert-warn { background: var(--amber-light); border: 1px solid #FCD34D; color: var(--amber); }
+
+  .empty-state { text-align: center; padding: 56px 24px; color: var(--gray-400); }
+  .empty-icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .prazos-grid { display: flex; flex-direction: column; gap: 6px; }
+  .prazo-row { display: flex; align-items: center; background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 10px 14px; gap: 12px; }
+  .prazo-name { flex: 1; font-size: 13px; color: var(--gray-700); }
+  .prazo-du { font-family: var(--mono); font-size: 13px; font-weight: 500; min-width: 60px; text-align: right; }
+  .badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; font-family: var(--mono); min-width: 62px; text-align: center; }
+  .badge-g { background: var(--green-light); color: var(--green); }
+  .badge-a { background: var(--amber-light); color: var(--amber); }
+  .badge-r { background: var(--red-light); color: var(--red); }
+  .prazo-note { margin-top: 16px; background: var(--gray-100); border-radius: 8px; padding: 12px 14px; font-size: 12px; color: var(--gray-600); line-height: 1.6; font-family: var(--mono); }
+
+  .tpl-tipo-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tpl-tipo-btn { padding: 7px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--gray-200); border-radius: 20px; background: #fff; color: var(--gray-600); font-family: var(--font); transition: all .15s; }
+  .tpl-tipo-btn.sel { background: var(--green); border-color: var(--green); color: #fff; }
+  .tpl-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 8px; font-family: var(--mono); }
+  .tpl-box { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; font-family: var(--mono); font-size: 12.5px; line-height: 1.9; color: var(--gray-700); white-space: pre-wrap; }
+  .copy-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  .copy-btn { padding: 8px 18px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--gray-300); border-radius: 6px; background: #fff; color: var(--gray-700); font-family: var(--font); transition: all .15s; }
+  .copy-btn:hover { background: var(--gray-100); }
+  .copy-ok { font-size: 12px; color: var(--green); font-family: var(--mono); display: none; }
+  .tpl-obs { margin-top: 14px; padding: 12px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.6; background: var(--amber-light); border: 1px solid #FCD34D; color: var(--amber); }
+
+  .script-accordion { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
+  .script-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--gray-700); user-select: none; }
+  .script-header:hover { background: var(--gray-50); }
+  .script-arrow { font-size: 10px; color: var(--gray-400); transition: transform .2s; }
+  .script-accordion.open .script-arrow { transform: rotate(180deg); }
+  .script-body { display: none; padding: 0 14px 14px; font-size: 13px; color: var(--gray-600); line-height: 1.7; border-top: 1px solid var(--gray-100); font-style: italic; }
+  .script-accordion.open .script-body { display: block; padding-top: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge">RN 566</div>
+  <h1>Garantia de Atendimento <span>Guia rápido de atendimento</span></h1>
+</header>
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('checklist',this)">Checklist</button>
+    <button class="tab" onclick="showTab('prazos',this)">Prazos ANS</button>
+    <button class="tab" onclick="showTab('template',this)">Template BO</button>
+    <button class="tab" onclick="showTab('scripts',this)">Scripts</button>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div id="tab-checklist" class="screen active">
+    <div class="section-label" style="margin-top:0">Selecione o tipo de atendimento</div>
+    <div class="tipo-selector">
+      <button class="tipo-pill" onclick="selectTipo('consulta',this)">Consulta</button>
+      <button class="tipo-pill" onclick="selectTipo('exame',this)">Exame</button>
+      <button class="tipo-pill" onclick="selectTipo('terapia',this)">Terapia convencional</button>
+      <button class="tipo-pill" onclick="selectTipo('tea',this)">Terapia especial (TEA)</button>
+      <button class="tipo-pill" onclick="selectTipo('procedimento',this)">Procedimento</button>
+    </div>
+
+    <div id="empty-state" class="empty-state">
+      <div class="empty-icon">☝️</div>
+      <p>Selecione o tipo de atendimento acima para ver o checklist correspondente.</p>
+    </div>
+
+    <!-- CONSULTA -->
+    <div id="cl-consulta" class="checklist-panel">
+      <div class="progress-row"><span class="progress-label" id="lbl-consulta">0 / 8 critérios</span><button class="reset-btn" onclick="resetPanel('consulta')">limpar</button></div>
+      <div class="progress-track"><div class="progress-fill fill-consulta" id="bar-consulta" style="width:0%"></div></div>
+      <div class="section-label">Cadastro e elegibilidade</div>
+      <div class="check-card" onclick="toggle(this,'consulta')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Confirmar para quem é o atendimento</div><div class="check-sub">Protocolo TASY aberto no cadastro correto do beneficiário</div></div></div>
+      <div class="check-card" onclick="toggle(this,'consulta')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Plano está apto</div><div class="check-sub">RN 566 não pode ser aberta para planos inaptos</div></div></div>
+      <div class="check-card" onclick="toggle(this,'consulta')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Carência cumprida para consulta</div><div class="check-sub">Verificar carência específica conforme o tipo de consulta</div></div></div>
+      <div class="check-card" onclick="toggle(this,'consulta')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Não é plano Intercâmbio</div><div class="check-sub">Intercâmbio → abrir GIU, não BO de Garantia</div></div></div>
+      <div class="section-label">Rede e disponibilidade</div>
+      <div class="check-card" onclick="toggle(this,'consulta')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Rede credenciada ofertada e esgotada</div><div class="check-sub">Registrar no histórico quais clínicas foram ofertadas</div></div></div>
+      <div class="check-card" onclick="toggle(this,'consulta')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Impressão de relatório 1699 consultada</div><div class="check-sub">Verificar prestadores credenciados disponíveis para a especialidade<br><span class="check-tag tag-ver">verificar</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'consulta')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Sem vagas disponíveis dentro do prazo ANS</div><div class="check-sub">Verificar agenda interna, externa e encaixes no sistema</div></div></div>
+      <div class="check-card" onclick="toggle(this,'consulta')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Não há BO anterior em andamento para o mesmo serviço</div><div class="check-sub">Exceção: sem condições de arcar com reembolso ou reagendamento</div></div></div>
+      <div id="ok-consulta" class="alert alert-ok"><strong>Todos os critérios atendidos.</strong> Pode prosseguir com a abertura do BO.</div>
+      <div id="warn-consulta" class="alert alert-warn"><strong>Atenção:</strong> Verifique os itens pendentes antes de abrir o BO.</div>
+    </div>
+
+    <!-- EXAME -->
+    <div id="cl-exame" class="checklist-panel">
+      <div class="progress-row"><span class="progress-label" id="lbl-exame">0 / 10 critérios</span><button class="reset-btn" onclick="resetPanel('exame')">limpar</button></div>
+      <div class="progress-track"><div class="progress-fill fill-exame" id="bar-exame" style="width:0%"></div></div>
+      <div class="section-label">Cadastro e elegibilidade</div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Confirmar para quem é o atendimento</div><div class="check-sub">Protocolo TASY aberto no cadastro correto do beneficiário</div></div></div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Plano está apto</div><div class="check-sub">RN 566 não pode ser aberta para planos inaptos</div></div></div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Carência cumprida para o exame solicitado</div><div class="check-sub">Verificar carência específica do exame</div></div></div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Não é plano Intercâmbio</div><div class="check-sub">Intercâmbio → abrir GIU, não BO de Garantia</div></div></div>
+      <div class="section-label">Documentação</div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Autorização válida com quantidade disponível</div><div class="check-sub">Não executada, vencida, cancelada ou em auditoria<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Pedido médico completo e dentro da validade</div><div class="check-sub">Nome, procedimento, indicação clínica, assinatura e carimbo<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Autorização conforme o pedido médico</div><div class="check-sub">Se divergente, solicitar retificação antes de abrir a garantia<br><span class="check-tag tag-ver">verificar</span></div></div></div>
+      <div class="section-label">Rede e disponibilidade</div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Rede credenciada ofertada e esgotada</div><div class="check-sub">Registrar no histórico quais clínicas foram ofertadas</div></div></div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Impressão de relatório 1699 consultada</div><div class="check-sub">Verificar prestadores credenciados disponíveis para o exame<br><span class="check-tag tag-ver">verificar</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'exame')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Sem vagas disponíveis dentro do prazo ANS</div><div class="check-sub">Verificar agenda interna, externa e encaixes no sistema</div></div></div>
+      <div id="ok-exame" class="alert alert-ok"><strong>Todos os critérios atendidos.</strong> Pode prosseguir. Lembre de vincular a requisição em Guia/Requisição.</div>
+      <div id="warn-exame" class="alert alert-warn"><strong>Atenção:</strong> Verifique os itens pendentes antes de abrir o BO.</div>
+    </div>
+
+    <!-- TERAPIA CONVENCIONAL -->
+    <div id="cl-terapia" class="checklist-panel">
+      <div class="progress-row"><span class="progress-label" id="lbl-terapia">0 / 11 critérios</span><button class="reset-btn" onclick="resetPanel('terapia')">limpar</button></div>
+      <div class="progress-track"><div class="progress-fill fill-terapia" id="bar-terapia" style="width:0%"></div></div>
+      <div class="section-label">Cadastro e elegibilidade</div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Confirmar para quem é o atendimento</div><div class="check-sub">Protocolo TASY aberto no cadastro correto do beneficiário</div></div></div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Plano está apto</div><div class="check-sub">RN 566 não pode ser aberta para planos inaptos</div></div></div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Carência cumprida para a terapia solicitada</div><div class="check-sub">Verificar carência específica do tipo de terapia</div></div></div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Não é plano Intercâmbio</div><div class="check-sub">Intercâmbio → abrir GIU, não BO de Garantia</div></div></div>
+      <div class="section-label">Documentação</div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Autorização prévia obtida</div><div class="check-sub">Obrigatória para fisioterapia, fonoaudiologia, TO e psicologia<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Sessões autorizadas disponíveis</div><div class="check-sub">Não executadas, não vencidas e não canceladas<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Pedido médico completo e dentro da validade</div><div class="check-sub">Nome, procedimento, indicação clínica, assinatura e carimbo<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Terapia sem método ou abordagem específica</div><div class="check-sub">Com método → é Terapia Especial TEA, use o checklist correspondente<br><span class="check-tag tag-ver">verificar</span></div></div></div>
+      <div class="section-label">Rede e disponibilidade</div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Rede credenciada ofertada e esgotada</div><div class="check-sub">Registrar no histórico quais clínicas foram ofertadas</div></div></div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Impressão de relatório 1699 consultada</div><div class="check-sub">Verificar prestadores credenciados disponíveis para a terapia<br><span class="check-tag tag-ver">verificar</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'terapia')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Sem vagas disponíveis dentro do prazo ANS</div><div class="check-sub">Verificar agenda interna, externa e encaixes no sistema</div></div></div>
+      <div id="ok-terapia" class="alert alert-ok"><strong>Todos os critérios atendidos.</strong> Pode prosseguir. Lembre de vincular a requisição em Guia/Requisição.</div>
+      <div id="warn-terapia" class="alert alert-warn"><strong>Atenção:</strong> Verifique os itens pendentes antes de abrir o BO.</div>
+    </div>
+
+    <!-- TEA -->
+    <div id="cl-tea" class="checklist-panel">
+      <div class="progress-row"><span class="progress-label" id="lbl-tea">0 / 11 critérios</span><button class="reset-btn" onclick="resetPanel('tea')">limpar</button></div>
+      <div class="progress-track"><div class="progress-fill fill-tea" id="bar-tea" style="width:0%"></div></div>
+      <div class="section-label">Cadastro e elegibilidade</div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Confirmar para quem é o atendimento</div><div class="check-sub">Protocolo TASY aberto no cadastro correto do beneficiário</div></div></div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Plano está apto</div><div class="check-sub">RN 566 não pode ser aberta para planos inaptos</div></div></div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Carência cumprida para a terapia solicitada</div><div class="check-sub">Verificar carência específica do tipo de terapia</div></div></div>
+      <div class="section-label">Documentação — específico TEA</div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Beneficiário possui CID F84 (TEA) confirmado</div><div class="check-sub">Terapias especiais são exclusivas para pacientes TEA<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Autorização com método/abordagem especificado</div><div class="check-sub">Ex.: ABA, Denver, TCC, Integração Sensorial, Psicomotricidade<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Sessões autorizadas disponíveis</div><div class="check-sub">Reembolso cobre apenas a quantidade autorizada na requisição<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Pedido médico completo e dentro da validade</div><div class="check-sub">Nome, procedimento, indicação clínica, assinatura e carimbo<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Coletado horário da aula e preferência de dia/horário para terapia</div><div class="check-sub">Necessário para o setor de Gestão de Rede TEA realizar a busca<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="section-label">Rede e disponibilidade</div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Rede credenciada ofertada e esgotada</div><div class="check-sub">Registrar no histórico quais clínicas foram ofertadas</div></div></div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Sem vagas disponíveis dentro do prazo ANS</div><div class="check-sub">Verificar agenda interna e encaixes no sistema</div></div></div>
+      <div class="check-card" onclick="toggle(this,'tea')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Identificado se é inexistência ou insuficiência de rede</div><div class="check-sub">Inexistência = sem clínicas credenciadas · Insuficiência = clínicas sem vagas<br><span class="check-tag tag-ver">verificar</span></div></div></div>
+      <div id="ok-tea" class="alert alert-ok"><strong>Todos os critérios atendidos.</strong> Usar setor <strong>RN 566 – Gestão de Rede TEA</strong>. Vincular requisição em Guia/Requisição.</div>
+      <div id="warn-tea" class="alert alert-warn"><strong>Atenção:</strong> Verifique os itens pendentes antes de abrir o BO.</div>
+    </div>
+
+    <!-- PROCEDIMENTO -->
+    <div id="cl-procedimento" class="checklist-panel">
+      <div class="progress-row"><span class="progress-label" id="lbl-procedimento">0 / 10 critérios</span><button class="reset-btn" onclick="resetPanel('procedimento')">limpar</button></div>
+      <div class="progress-track"><div class="progress-fill fill-procedimento" id="bar-procedimento" style="width:0%"></div></div>
+      <div class="section-label">Cadastro e elegibilidade</div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Confirmar para quem é o atendimento</div><div class="check-sub">Protocolo TASY aberto no cadastro correto do beneficiário</div></div></div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Plano está apto</div><div class="check-sub">RN 566 não pode ser aberta para planos inaptos</div></div></div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Carência cumprida para o procedimento solicitado</div><div class="check-sub">Verificar carência específica do tipo de procedimento</div></div></div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Não é plano Intercâmbio</div><div class="check-sub">Intercâmbio → abrir GIU, não BO de Garantia</div></div></div>
+      <div class="section-label">Documentação</div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Autorização válida com código do procedimento principal</div><div class="check-sub">Usar código principal para procedimentos cirúrgicos<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Pedido médico completo e dentro da validade</div><div class="check-sub">Nome, procedimento, indicação clínica, assinatura e carimbo<br><span class="check-tag tag-obrig">obrigatório</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Identificado se é simples, médio ou complexo (PAC)</div><div class="check-sub">Simples/Médio = 10 DU · PAC = 21 DU · prazo do BO muda conforme complexidade<br><span class="check-tag tag-ver">verificar</span></div></div></div>
+      <div class="section-label">Rede e disponibilidade</div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Rede credenciada ofertada e esgotada</div><div class="check-sub">Registrar no histórico quais clínicas foram ofertadas</div></div></div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Impressão de relatório 1699 consultada</div><div class="check-sub">Verificar prestadores credenciados disponíveis para o procedimento<br><span class="check-tag tag-ver">verificar</span></div></div></div>
+      <div class="check-card" onclick="toggle(this,'procedimento')"><div class="custom-check"></div><div class="check-text"><div class="check-main">Sem vagas disponíveis dentro do prazo ANS</div><div class="check-sub">Verificar agenda interna, externa e encaixes no sistema</div></div></div>
+      <div id="ok-procedimento" class="alert alert-ok"><strong>Todos os critérios atendidos.</strong> Pode prosseguir. Lembre de vincular a requisição em Guia/Requisição.</div>
+      <div id="warn-procedimento" class="alert alert-warn"><strong>Atenção:</strong> Verifique os itens pendentes antes de abrir o BO.</div>
+    </div>
+  </div>
+
+  <!-- PRAZOS -->
+  <div id="tab-prazos" class="screen">
+    <div class="prazos-grid">
+      <div class="prazo-row"><div class="prazo-name">Consulta básica — pediatria, clínica médica, cirurgia geral, gineco/obstetrícia</div><div class="prazo-du" style="color:var(--green)">7 DU</div><span class="badge badge-g">rápido</span></div>
+      <div class="prazo-row"><div class="prazo-name">Consulta em demais especialidades</div><div class="prazo-du" style="color:var(--amber)">14 DU</div><span class="badge badge-a">médio</span></div>
+      <div class="prazo-row"><div class="prazo-name">Consulta/sessão — fonoaudiólogo, nutricionista, psicólogo, fisioterapeuta, TO</div><div class="prazo-du" style="color:var(--amber)">10 DU</div><span class="badge badge-a">médio</span></div>
+      <div class="prazo-row"><div class="prazo-name">Consulta e procedimentos em consultório/clínica com cirurgião-dentista</div><div class="prazo-du" style="color:var(--green)">7 DU</div><span class="badge badge-g">rápido</span></div>
+      <div class="prazo-row"><div class="prazo-name">Exames laboratoriais (hemograma, glicemia, urina, pezinho etc.)</div><div class="prazo-du" style="color:var(--green)">3 DU</div><span class="badge badge-g">rápido</span></div>
+      <div class="prazo-row"><div class="prazo-name">Demais diagnósticos e terapias ambulatoriais (imagem, funcionais, terapias)</div><div class="prazo-du" style="color:var(--amber)">10 DU</div><span class="badge badge-a">médio</span></div>
+      <div class="prazo-row"><div class="prazo-name">Procedimentos de alta complexidade (PAC)</div><div class="prazo-du" style="color:var(--red)">21 DU</div><span class="badge badge-r">complexo</span></div>
+      <div class="prazo-row"><div class="prazo-name">Atendimento em regime hospital-dia</div><div class="prazo-du" style="color:var(--amber)">10 DU</div><span class="badge badge-a">médio</span></div>
+      <div class="prazo-row"><div class="prazo-name">Internação eletiva</div><div class="prazo-du" style="color:var(--red)">21 DU</div><span class="badge badge-r">complexo</span></div>
+      <div class="prazo-row"><div class="prazo-name">Urgência e emergência</div><div class="prazo-du" style="color:var(--red)">Imediato</div><span class="badge badge-r">urgente</span></div>
+    </div>
+    <div class="prazo-note">Prazo de resposta do BO (RN 623): até 5 DU para atendimentos simples · até 10 DU para PAC e internação eletiva.<br>O prazo acima é o da realização do serviço (data do agendamento).</div>
+  </div>
+
+  <!-- TEMPLATE -->
+  <div id="tab-template" class="screen">
+    <div class="tpl-label">Tipo de garantia</div>
+    <div class="tpl-tipo-row">
+      <button class="tpl-tipo-btn sel" onclick="setTplTipo('ga',this)">Garantia de Atendimento</button>
+      <button class="tpl-tipo-btn" onclick="setTplTipo('ic',this)">Intercâmbio</button>
+      <button class="tpl-tipo-btn" onclick="setTplTipo('tea',this)">Gestão de Rede TEA</button>
+    </div>
+    <div class="tpl-label">Campo descrição — template</div>
+    <div class="tpl-box" id="tpl-box"></div>
+    <div class="copy-row">
+      <button class="copy-btn" onclick="copyTpl()">Copiar texto</button>
+      <span class="copy-ok" id="copy-ok">Copiado!</span>
+    </div>
+    <div id="tpl-obs" class="tpl-obs"></div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <div id="tab-scripts" class="screen">
+    <div class="script-accordion" onclick="toggleAcc(this)"><div class="script-header">Confirmação da abertura <span class="script-arrow">▼</span></div><div class="script-body">"[Nome do cliente], a solicitação foi registrada sob o número [número]. O retorno será realizado em até 5 dias úteis, pelos contatos confirmados no início do atendimento, com as informações de local, data e horário. Deseja anotar o número da solicitação?"</div></div>
+  </div>
+</div>
+
+<script>
+var totals = { consulta:8, exame:10, terapia:11, tea:11, procedimento:10 };
+
+function selectTipo(tipo, btn) {
+  document.querySelectorAll('.tipo-pill').forEach(function(b){ b.className='tipo-pill'; });
+  btn.classList.add('sel-'+tipo);
+  document.querySelectorAll('.checklist-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('cl-'+tipo).classList.add('active');
+}
+
+function toggle(card, tipo) {
+  card.classList.toggle('done');
+  updateProgress(tipo);
+}
+
+function updateProgress(tipo) {
+  var cards = document.querySelectorAll('#cl-'+tipo+' .check-card');
+  var done = 0;
+  cards.forEach(function(c){ if(c.classList.contains('done')) done++; });
+  var total = totals[tipo];
+  document.getElementById('bar-'+tipo).style.width = Math.round(done/total*100)+'%';
+  document.getElementById('lbl-'+tipo).textContent = done+' / '+total+' critérios';
+  var ok = document.getElementById('ok-'+tipo);
+  var warn = document.getElementById('warn-'+tipo);
+  ok.classList.remove('show'); warn.classList.remove('show');
+  if(done===total){ ok.classList.add('show'); }
+  else if(done>=Math.floor(total*0.5)){ warn.classList.add('show'); }
+}
+
+function resetPanel(tipo) {
+  document.querySelectorAll('#cl-'+tipo+' .check-card').forEach(function(c){ c.classList.remove('done'); });
+  document.getElementById('bar-'+tipo).style.width='0%';
+  document.getElementById('lbl-'+tipo).textContent='0 / '+totals[tipo]+' critérios';
+  document.getElementById('ok-'+tipo).classList.remove('show');
+  document.getElementById('warn-'+tipo).classList.remove('show');
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+var templates = {
+  ga: "Protocolo:\nBeneficiário: [apenas o nome]\nAbrangência contratual:\nServiço: [ex.: Consulta com endocrinologista / Exame Ultrassom Transvaginal]\nRequisição:\nLocalidade: [Cidade/UF]\nTelefone: [DDD + número]\nE-mail:\nDescrição do caso: [ex.: Beneficiário solicita garantia de atendimento com [especialidade]. Não há vagas no sistema e informa que já contatou os credenciados, que também não possuem vagas. Ciente de que a garantia é para a especialidade, não para profissional específico.]",
+  ic: "Protocolo:\nBeneficiário: [apenas o nome]\nAbrangência contratual:\nServiço: [ex.: Consulta com endocrinologista / Exame Ultrassom Transvaginal]\nRequisição:\nLocalidade: [Cidade/UF]\nTelefone: [DDD + número]\nE-mail:\nSugestão de local para atendimento:\nDescrição do caso: [ex.: Beneficiário solicita garantia de atendimento com [especialidade] fora do estado. Não há vagas e já contatou credenciados. Ciente de que a garantia é para a especialidade, não para profissional específico.]",
+  tea: "Protocolo:\nBeneficiário: [apenas o nome]\nAbrangência contratual:\nServiço: [ex.: Sessões de Terapia Ocupacional com Integração Sensorial]\nRequisição:\nLocalidade: [Cidade/UF]\nTelefone: [DDD + número]\nE-mail:\nHorário da aula da criança:\nMelhor dia da semana para a terapia:\nMelhor horário para a terapia:\nDescrição do caso: [ex.: Beneficiário solicita garantia para [terapia/método]. Já contatou credenciados, sem vagas. Ciente de que a garantia é para a especialidade. Preferência por atendimento presencial.]"
+};
+var obs = {
+  ga: "Atenção: Para exame, terapia ou procedimento, preencher obrigatoriamente o número da requisição em Guia/Requisição. Para Ecodoppler Cardiograma Fetal, registrar a idade gestacional.",
+  ic: "Atenção: Origem = Externa. Para exame, terapia ou procedimento, preencher número da requisição em Guia/Requisição. Para Ecodoppler Cardiograma Fetal, registrar a idade gestacional.",
+  tea: "Atenção: Preencher obrigatoriamente o número da requisição em Guia/Requisição. Tipo: escolher entre Busca por inexistência de Rede ou Busca por insuficiência na Rede conforme a situação."
+};
+var currentTplTipo = 'ga';
+
+function setTplTipo(t, btn) {
+  currentTplTipo = t;
+  document.querySelectorAll('.tpl-tipo-btn').forEach(function(b){ b.classList.remove('sel'); });
+  btn.classList.add('sel');
+  document.getElementById('tpl-box').textContent = templates[t];
+  document.getElementById('tpl-obs').textContent = obs[t];
+}
+
+function copyTpl() {
+  navigator.clipboard.writeText(templates[currentTplTipo]).then(function(){
+    var ok = document.getElementById('copy-ok');
+    ok.style.display='inline';
+    setTimeout(function(){ ok.style.display='none'; }, 2000);
+  });
+}
+
+function toggleAcc(el){ el.classList.toggle('open'); }
+
+document.getElementById('tpl-box').textContent = templates['ga'];
+document.getElementById('tpl-obs').textContent = obs['ga'];
+</script>
+</body>
+</html>
